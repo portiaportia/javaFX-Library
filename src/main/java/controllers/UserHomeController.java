@@ -6,22 +6,33 @@ package controllers;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
+
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import library.App;
 import model.*;
 
 /**
@@ -30,10 +41,7 @@ import model.*;
  */
 public class UserHomeController implements Initializable {
     @FXML private Label lbl_title;
-    @FXML private ListView lst_books;
-    @FXML private Label lbl_book_title;
-    @FXML private Label lbl_book_author;
-    @FXML private ImageView img_book;
+    @FXML private GridPane grid_books;
     private Library library;
     private User user;
     
@@ -48,27 +56,42 @@ public class UserHomeController implements Initializable {
     }   
     
     private void displayUserItems(){
-        ObservableList<String> book_list =FXCollections.observableArrayList ();
-        
-        for(Loan loan : user.getLoans()){
-            book_list.add(loan.getBook().getTitle());
+        ArrayList<Loan> loans = user.getLoans();
+        for (int i=0; i < loans.size(); i++) {
+            Loan loan = loans.get(i);
+            Book book = loan.getBook();
+            VBox vbox = new VBox();
+            Label bookTitle = new Label(book.getTitle());
+            bookTitle.setFont(new Font(14));
+            vbox.getChildren().add(bookTitle);
+            Image image = new Image(getClass().getResourceAsStream("/images/" + loan.getBook().getImageName()));
+            ImageView image_book = new ImageView(image);
+            image_book.setFitWidth(100);
+            image_book.setPreserveRatio(true);
+            vbox.getChildren().add(image_book);
+            vbox.getStyleClass().add("book-grid-item");
+
+            grid_books.add(vbox, i,0);
+
+            image_book.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+                @Override
+                public void handle(MouseEvent event) {
+                    /*Dialog<String> dialog = new Dialog<String>();
+                    dialog.setTitle(book.getTitle());
+                    dialog.setContentText("This is a sample dialog");
+                    //Adding buttons to the dialog pane
+                    ButtonType type = new ButtonType("Ok", ButtonData.OK_DONE);
+                    dialog.getDialogPane().getButtonTypes().add(type);
+                                
+                    dialog.showAndWait();*/
+
+                    Dialog<Loan> bookDialog = new BookItemDialog(loan);
+                    bookDialog.showAndWait();
+                }
+                
+            });
         }
-        
-        lst_books.setItems(book_list);
     }
     
-    @FXML
-    private void bookItemClicked(MouseEvent event) throws IOException  {
-        String bookName = lst_books.getSelectionModel().getSelectedItem().toString();
-        
-        for(Loan loan : user.getLoans()){
-            if(loan.getBook().getTitle().equalsIgnoreCase(bookName)){
-                lbl_book_title.setText(loan.getBook().getTitle());
-                lbl_book_author.setText(loan.getBook().getAuthor());
-                //System.out.println("*** " + getClass().getResourceAsStream("/images/" + item.getImageName()));
-                Image image = new Image(getClass().getResourceAsStream("/images/" + loan.getBook().getImageName()));
-                img_book.setImage(image);
-            }
-        }
-    }
 }

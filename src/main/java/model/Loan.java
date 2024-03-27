@@ -37,7 +37,7 @@ public class Loan {
         }
 
         renewCount--;
-        dueDate.plusMonths(1);
+        dueDate = dueDate.plusMonths(1);
         return true;
     }
 
