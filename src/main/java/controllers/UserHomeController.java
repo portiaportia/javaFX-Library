@@ -65,7 +65,7 @@ public class UserHomeController implements Initializable {
             if(item.getTitle().equalsIgnoreCase(bookName)){
                 lbl_book_title.setText(item.getTitle());
                 lbl_book_author.setText(item.getAuthor());
-                //Image image = new Image(getClass().getResourceAsStream(item.getImageName()));
+                //System.out.println("*** " + getClass().getResourceAsStream("/images/" + item.getImageName()));
                 Image image = new Image(getClass().getResourceAsStream("/images/" + item.getImageName()));
                 img_book.setImage(image);
             }
