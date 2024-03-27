@@ -5,26 +5,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.time.LocalDate;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class Database {
-	protected static final String USER_FILE_NAME = "src/main/java/data/users.json";
-	protected static final String USER_ID = "id";
-	protected static final String USER_USER_NAME = "userName";
-	protected static final String USER_FIRST_NAME = "firstName";
-	protected static final String USER_LAST_NAME = "lastName";
-	protected static final String USER_AGE = "age";
-	protected static final String USER_PHONE_NUMBER = "phoneNumber";
+public class Database extends DataConstants {
 
 	public static ArrayList<User> getUsers() {
 		ArrayList<User> users = new ArrayList<User>();
 
 		try {
 			FileReader reader = new FileReader(USER_FILE_NAME);
-			JSONParser parser = new JSONParser();
 			JSONArray peopleJSON = (JSONArray) new JSONParser().parse(reader);
 
 			for (int i = 0; i < peopleJSON.size(); i++) {
@@ -39,17 +32,64 @@ public class Database {
 				users.add(new User(id, userName, firstName, lastName, age, phoneNumber));
 			}
 
-			return users;
+			reader.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return null;
+		return users;
 	}
 
-	public static ArrayList<Item> getItems() {
-		return new ArrayList<Item>();
+	public static ArrayList<Book> getBooks() {
+		ArrayList<Book> books = new ArrayList<Book>();
+
+		try {
+			FileReader reader = new FileReader(BOOK_FILE_NAME);
+			JSONArray booksJSON = (JSONArray) new JSONParser().parse(reader);
+
+			for (int i = 0; i < booksJSON.size(); i++) {
+				JSONObject bookJSON = (JSONObject) booksJSON.get(i);
+				UUID id = UUID.fromString((String) bookJSON.get(BOOK_ID));
+				String title = (String) bookJSON.get(BOOK_TITLE);
+				int year = ((Long)bookJSON.get(BOOK_YEAR)).intValue();
+				String genre = (String) bookJSON.get(BOOK_GENRE);
+				String isbn = (String) bookJSON.get(BOOK_ISBN);
+				String publisher = (String) bookJSON.get(BOOK_PUBLISHER);
+				String author = (String) bookJSON.get(BOOK_AUTHOR);
+				int numCopies = ((Long)bookJSON.get(BOOK_NUM_COPIES)).intValue();
+				boolean newArrival = (Boolean)bookJSON.get(BOOK_NEW_ARRIVAL);
+				String imageName = (String) bookJSON.get(BOOK_IMG);
+				Book book = new Book( id,  title, year,  genre,  isbn,  publisher,  author,  numCopies,  newArrival, imageName);
+				ArrayList<Loan> loans = getLoans(book, (JSONArray)bookJSON.get(BOOK_LOANS));
+				book.setLoans(loans);
+				books.add(book);
+			}
+
+			reader.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return books;
+	}
+
+	private static ArrayList<Loan> getLoans(Book book, JSONArray loansJSON){
+		ArrayList<Loan> loans = new ArrayList<>();
+
+		for (int i = 0; i < loansJSON.size(); i++) {
+			JSONObject loanJSON = (JSONObject) loansJSON.get(i);
+			UUID id = UUID.fromString((String) loanJSON.get(LOAN_USER_ID));
+			User user = Users.getInstance().getUserById(id);
+			if(user == null) continue;
+			LocalDate dueDate = getDate((String)loanJSON.get(LOAN_DUE));
+			int renewCount = ((Long)loanJSON.get(LOAN_RENEW_COUNT)).intValue();
+			Loan loan = new Loan(user, book, dueDate, renewCount);
+			loans.add(loan);
+			user.addLoan(loan);
+		}
+		return loans;
 	}
 
 	public static void saveUsers() {
@@ -74,7 +114,7 @@ public class Database {
 		}
 	}
 
-	public static JSONObject getUserJSON(User user) {
+	private static JSONObject getUserJSON(User user) {
 		JSONObject userDetails = new JSONObject();
 		userDetails.put(USER_ID, user.getId().toString());
 		userDetails.put(USER_USER_NAME, user.getUserName());
@@ -85,5 +125,9 @@ public class Database {
 
 		return userDetails;
 
+	}
+
+	private static LocalDate getDate(String data) {
+		return LocalDate.parse(data);
 	}
 }

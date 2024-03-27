@@ -50,8 +50,8 @@ public class UserHomeController implements Initializable {
     private void displayUserItems(){
         ObservableList<String> book_list =FXCollections.observableArrayList ();
         
-        for(Item item : user.getItems()){
-            book_list.add(item.getTitle());
+        for(Loan loan : user.getLoans()){
+            book_list.add(loan.getBook().getTitle());
         }
         
         lst_books.setItems(book_list);
@@ -61,12 +61,12 @@ public class UserHomeController implements Initializable {
     private void bookItemClicked(MouseEvent event) throws IOException  {
         String bookName = lst_books.getSelectionModel().getSelectedItem().toString();
         
-        for(Item item : user.getItems()){
-            if(item.getTitle().equalsIgnoreCase(bookName)){
-                lbl_book_title.setText(item.getTitle());
-                lbl_book_author.setText(item.getAuthor());
+        for(Loan loan : user.getLoans()){
+            if(loan.getBook().getTitle().equalsIgnoreCase(bookName)){
+                lbl_book_title.setText(loan.getBook().getTitle());
+                lbl_book_author.setText(loan.getBook().getAuthor());
                 //System.out.println("*** " + getClass().getResourceAsStream("/images/" + item.getImageName()));
-                Image image = new Image(getClass().getResourceAsStream("/images/" + item.getImageName()));
+                Image image = new Image(getClass().getResourceAsStream("/images/" + loan.getBook().getImageName()));
                 img_book.setImage(image);
             }
         }

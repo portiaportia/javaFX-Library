@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Users {
 	private static Users users;
@@ -31,6 +32,16 @@ public class Users {
 	public User getUser(String userName) {
 		for(User user : userList) {
 			if(user.getUserName().equals(userName)) {
+				return user;
+			}
+		}
+		
+		return null;
+	}
+
+	public User getUserById(UUID id) {
+		for(User user : userList) {
+			if(user.getId().equals(id)) {
 				return user;
 			}
 		}

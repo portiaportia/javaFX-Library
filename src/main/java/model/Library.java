@@ -1,13 +1,15 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Library {
-	private Items items;
+	private Books books;
 	private Users users;
 	private User currentUser;
         private static Library library;
 	
 	private Library() {
-		items = Items.getInstance();
+		books = Books.getInstance();
 		users = Users.getInstance();
 	}
         
@@ -36,31 +38,8 @@ public class Library {
 		return currentUser;
 	}
 	
-	//Returns true if item is found, and false otherwise
-	public boolean findItem(String itemName) {
-		return items.haveItem(itemName);
-	}
-	
-	public boolean checkout(String itemName) {
-		if(!findItem(itemName))return false;
-		
-		//checkout the item
-		//need a user then have them checkout an item
-		return true;
-	}
-	
-	public boolean rateItem(String itemName, int rating) {
-		if(!findItem(itemName))return false;
-		
-		if(rating < 0 || rating > 5) return false;
-		
-		return true;
-	}
-	
-	public boolean payFine(int amount) {
-		if(amount < 0) return false;
-		
-		return true; 	//successfully paid fine
+	public Book getBook(String bookName) {
+		return books.getBook(bookName);
 	}
 	
 	public void logout() {

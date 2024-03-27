@@ -10,6 +10,7 @@ public class User {
 	private String lastName;
 	private int age;
 	private String phoneNumber;
+	private ArrayList<Loan> loans;
 	
 	//new account
 	public User(String userName, String firstName, String lastName, int age, String phoneNumber) {
@@ -19,6 +20,7 @@ public class User {
 		this.lastName = lastName;
 		this.age = age;
 		this.phoneNumber = phoneNumber;
+		loans = new ArrayList<>();
 	}
 	
 	//existing account loaded from json
@@ -29,6 +31,7 @@ public class User {
 		this.lastName = lastName;
 		this.age = age;
 		this.phoneNumber = phoneNumber;
+		loans = new ArrayList<>();
 	}
 	
 	public UUID getId() {
@@ -66,14 +69,13 @@ public class User {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+
+	public void addLoan(Loan loan){
+		this.loans.add(loan);
+	}
         
-        public ArrayList<Item> getItems(){
-            ArrayList<Item> items = new ArrayList<Item>();
-            items.add(new Item("The Cat in the Hat", "Dr. Seuss", "cat-in-hat.jpeg"));
-            items.add(new Item("Where the Wild Things Are", "Maurice Sendak", "wild-things.jpg"));
-            items.add(new Item("Pajama Time", "Sandra Boynton", "pajama-time.jpg"));
-            items.add(new Item("Green Eggs and Ham", "Dr. Seuss", "green-eggs.jpg"));
-            return items;
-        }
+	public ArrayList<Loan> getLoans(){
+		return loans;
+	}
 	
 }
