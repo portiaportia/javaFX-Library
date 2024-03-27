@@ -1,17 +1,23 @@
 .root {
   -fx-font-size: 16pt;
   -fx-font-family: "Helvetica";
-  -fx-base: #87c7d1;
-  -fx-background: #f2f2f2;
+  /*-fx-base: #87c7d1;*/
+  /*-fx-background: #f2f2f2;*/
+  -fx-text-fill: #fff;
+  -fx-background-image: url("../images/background.jpg");
+}
+
+.label {
+  -fx-text-fill: #fff;
 }
 
 .button {
-  -fx-background-color: #f2836b;
+  -fx-background-color: black;
   -fx-text-fill: #fff;
 }
 
 .book-grid-item {
-  -fx-background-color: #9acdd9;
+  -fx-background-color: #590202;
   -fx-padding: 10px;
   -fx-background-radius: 5;
   -fx-alignment: center;

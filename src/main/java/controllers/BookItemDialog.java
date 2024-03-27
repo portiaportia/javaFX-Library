@@ -40,6 +40,8 @@ public class BookItemDialog extends Dialog<Loan>{
 
 
         getDialogPane().setContent(vbox);
+        //System.out.println("Stylesheet " + getClass().getResource("/dialog.css"));
+        getDialogPane().getStylesheets().add(getClass().getResource("/dialog.css").toExternalForm());
         Image image = new Image(getClass().getResourceAsStream("/images/" + loan.getBook().getImageName()));
         ImageView image_book = new ImageView(image);
         getDialogPane().setGraphic(image_book);
