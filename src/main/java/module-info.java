@@ -2,6 +2,7 @@ module library {
     requires javafx.controls;
     requires javafx.fxml;
     requires json.simple;
+    requires junit;
 
     opens library to javafx.fxml;
 

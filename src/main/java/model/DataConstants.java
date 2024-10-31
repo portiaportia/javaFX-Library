@@ -2,6 +2,7 @@ package model;
 
 public abstract class DataConstants {
 	protected static final String USER_FILE_NAME = "src/main/java/data/users.json";
+	protected static final String USER_FILE_NAME_JSON = "/data/users.json";
 	protected static final String USER_ID = "id";
 	protected static final String USER_USER_NAME = "userName";
 	protected static final String USER_FIRST_NAME = "firstName";
@@ -10,6 +11,7 @@ public abstract class DataConstants {
 	protected static final String USER_PHONE_NUMBER = "phoneNumber";
 
 	protected static final String BOOK_FILE_NAME = "src/main/java/data/books.json";
+	protected static final String BOOK_FILE_NAME_JSON = "/data/books.json";
 	protected static final String BOOK_ID = "id";
 	protected static final String BOOK_TITLE = "title";
 	protected static final String BOOK_YEAR = "year";
@@ -26,4 +28,12 @@ public abstract class DataConstants {
 	protected static final String LOAN_DUE = "due";
 	protected static final String LOAN_RENEW_COUNT = "renew_count";
 
+	public static boolean isJUnitTest() {  
+		for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
+		  if (element.getClassName().startsWith("org.junit.")) {
+			return true;
+		  }           
+		}
+		return false;
+	  }
 }

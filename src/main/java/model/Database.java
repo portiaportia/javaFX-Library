@@ -1,8 +1,11 @@
 package model;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.time.LocalDate;
@@ -15,9 +18,8 @@ public class Database extends DataConstants {
 
 	public static ArrayList<User> getUsers() {
 		ArrayList<User> users = new ArrayList<User>();
-
+		BufferedReader reader = getReaderFromFile(USER_FILE_NAME, USER_FILE_NAME_JSON);
 		try {
-			FileReader reader = new FileReader(USER_FILE_NAME);
 			JSONArray peopleJSON = (JSONArray) new JSONParser().parse(reader);
 
 			for (int i = 0; i < peopleJSON.size(); i++) {
@@ -28,16 +30,14 @@ public class Database extends DataConstants {
 				String lastName = (String) personJSON.get(USER_LAST_NAME);
 				int age = ((Long) personJSON.get(USER_AGE)).intValue();
 				String phoneNumber = (String) personJSON.get(USER_PHONE_NUMBER);
-
+	
 				users.add(new User(id, userName, firstName, lastName, age, phoneNumber));
 			}
-
 			reader.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch(Exception e){
+			e.printStackTrace();		
 		}
-
+		
 		return users;
 	}
 
@@ -45,7 +45,7 @@ public class Database extends DataConstants {
 		ArrayList<Book> books = new ArrayList<Book>();
 
 		try {
-			FileReader reader = new FileReader(BOOK_FILE_NAME);
+			BufferedReader reader = getReaderFromFile(BOOK_FILE_NAME, BOOK_FILE_NAME_JSON);
 			JSONArray booksJSON = (JSONArray) new JSONParser().parse(reader);
 
 			for (int i = 0; i < booksJSON.size(); i++) {
@@ -65,10 +65,8 @@ public class Database extends DataConstants {
 				book.setLoans(loans);
 				books.add(book);
 			}
-
 			reader.close();
-
-		} catch (Exception e) {
+		} catch(Exception e){
 			e.printStackTrace();
 		}
 
@@ -104,12 +102,15 @@ public class Database extends DataConstants {
 		}
 
 		// Write JSON file
-		try (FileWriter file = new FileWriter(USER_FILE_NAME)) {
+		try  {
+			
+			String path = getFileWritingPath(USER_FILE_NAME, USER_FILE_NAME_JSON);
+			FileWriter writer = new FileWriter(path);
+			
+			writer.write(jsonUsers.toJSONString());
+			writer.flush();
 
-			file.write(jsonUsers.toJSONString());
-			file.flush();
-
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -129,5 +130,36 @@ public class Database extends DataConstants {
 
 	private static LocalDate getDate(String data) {
 		return LocalDate.parse(data);
+	}
+
+	private static String getFileWritingPath(String PATH_NAME, String JUNIT_PATH_NAME) {
+		try {
+			if(isJUnitTest()){
+				URI url = Database.class.getResource(JUNIT_PATH_NAME).toURI();
+				return url.getPath();
+			} else {
+				return PATH_NAME;
+			}
+		} catch(Exception e){
+			System.out.println("Difficulty getting resource path");
+			return "";
+		}
+	}
+
+	private static BufferedReader getReaderFromFile(String fileName, String jsonFileName){
+		try {
+			if(isJUnitTest()){
+				InputStream inputStream = Database.class.getResourceAsStream(jsonFileName);
+				InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+				return new BufferedReader(inputStreamReader);
+			} else {
+				FileReader reader = new FileReader(fileName);
+				return new BufferedReader(reader);
+			}
+		} catch(Exception e){
+			System.out.println("Can't load");
+			return null;
+		}
+			
 	}
 }
