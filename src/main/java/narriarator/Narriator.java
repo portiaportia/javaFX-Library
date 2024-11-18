@@ -7,6 +7,7 @@ import javazoom.jl.decoder.JavaLayerException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.polly.PollyClient;
+import software.amazon.awssdk.services.polly.PollyClientBuilder;
 import software.amazon.awssdk.services.polly.model.DescribeVoicesRequest;
 import software.amazon.awssdk.services.polly.model.Voice;
 import software.amazon.awssdk.services.polly.model.DescribeVoicesResponse;
@@ -23,7 +24,10 @@ public class Narriator {
     private Narriator(){};
 
     public static void playSound(String text){
-        PollyClient polly = PollyClient.builder().region(Region.EU_WEST_3).build();
+        Region region = Region.EU_WEST_3;
+        PollyClientBuilder builder = PollyClient.builder();
+        PollyClient polly = builder.region(region).build();
+        
 
         talkPolly(polly, text);
         polly.close();
